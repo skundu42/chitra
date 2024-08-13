@@ -13,13 +13,35 @@ use init::init_provider;
 #[tokio::main]
 async fn main() -> eyre::Result<()> {
     dotenv().ok();
+    
+    //TO-DO convert this logic to CLI later
+    
+    let sync_old: bool = env::var("SYNC_OLDER_BLOCKS")
+        .unwrap_or_else(|_| "false".to_string())
+        .parse()
+        .expect("Failed to parse SYNC_OLDER_BLOCKS as boolean");
 
-    sync_older_blocks().await?;
-    // Uncomment this line to start listening to new blocks
-    // listen_new_blocks().await?;
+    let sync_new: bool = env::var("LISTEN_NEW_BLOCKS")
+        .unwrap_or_else(|_| "false".to_string())
+        .parse()
+        .expect("Failed to parse LISTEN_NEW_BLOCKS as boolean");
+
+    if sync_old {
+        println!("Starting to sync older blocks...");
+        sync_older_blocks().await?;
+    }
+    if sync_new {
+        println!("Starting to listen for new blocks...");
+        listen_new_blocks().await?;
+    }
+    if !sync_old && !sync_new {
+        println!("No operation specified. Set SYNC_OLDER_BLOCKS or LISTEN_NEW_BLOCKS environment variables to true.");
+    }
 
     Ok(())
 }
+
+
 
 // This function listens to and stores the latest block details and their transactions
 async fn listen_new_blocks() -> eyre::Result<()> {

@@ -1,23 +1,22 @@
 mod db;
 mod init;
 
-use alloy::providers::{Provider};
+use alloy::providers::Provider;
+use alloy::eips::BlockId;
+use alloy::rpc::types::{BlockTransactions, BlockTransactionsKind};
 use futures_util::StreamExt;
 use dotenv::dotenv;
 use std::env;
-use alloy::eips::BlockId;
-use alloy::rpc::types::{BlockTransactions, BlockTransactionsKind};
 use db::{BlockData, SupabaseClient, TransactionData};
-use init::{init_provider};
+use init::init_provider;
 
 #[tokio::main]
 async fn main() -> eyre::Result<()> {
     dotenv().ok();
-    
-    //To: Create logic according to user parameters to handle old and new sync
-    
+
     sync_older_blocks().await?;
-    //listen_new_blocks().await?;
+    // Uncomment this line to start listening to new blocks
+    // listen_new_blocks().await?;
 
     Ok(())
 }
@@ -31,9 +30,8 @@ async fn listen_new_blocks() -> eyre::Result<()> {
     let supabase_client = SupabaseClient::new();
 
     while let Some(block) = stream.next().await {
-
         let block_number = block.header.number.expect("Block number is None");
-        println!("Received block:{:#?}",block_number);
+        println!("Received block: {:#?}", block_number);
 
         let block_data = BlockData {
             block_number,
@@ -151,4 +149,3 @@ async fn sync_tx_data(block_number: u64) -> eyre::Result<()> {
 
     Ok(())
 }
-

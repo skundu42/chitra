@@ -21,8 +21,6 @@ pub struct BlockData {
     pub gas_used: u128,
 }
 
-<<<<<<< HEAD
-=======
 #[derive(Serialize)]
 pub struct TransactionData {
     pub block_number: u64,
@@ -40,7 +38,6 @@ pub struct TransactionData {
     pub chain_id: Option<String>,
 }
 
->>>>>>> dev
 pub struct SupabaseClient {
     client: Client,
     url: String,
@@ -61,15 +58,9 @@ impl SupabaseClient {
     }
 
     pub async fn store_block_data(&self, block_data: BlockData) -> Result<()> {
-<<<<<<< HEAD
-        let url = format!("{}/rest/v1/blocks", self.url);
-        let response = self.client
-            .post(&url)
-=======
         let block_url = format!("{}/rest/v1/blocks", self.url);
         let bl_response = self.client
             .post(&block_url)
->>>>>>> dev
             .header("apikey", &self.api_key)
             .header("Authorization", format!("Bearer {}", &self.api_key))
             .header("Content-Type", "application/json")
@@ -77,12 +68,6 @@ impl SupabaseClient {
             .send()
             .await?;
 
-<<<<<<< HEAD
-        if response.status().is_success() {
-            println!("Block data stored successfully.");
-        } else {
-            println!("Failed to store block data: {:?}", response.text().await?);
-=======
         if bl_response.status().is_success() {
             println!("Block data stored successfully");
         } else {
@@ -107,7 +92,6 @@ impl SupabaseClient {
             println!("Transaction data stored successfully");
         } else {
             println!("Failed to store transaction data: {}", tx_response.text().await?);
->>>>>>> dev
         }
 
         Ok(())

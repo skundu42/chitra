@@ -21,6 +21,26 @@ pub struct BlockData {
     pub gas_used: u128,
 }
 
+<<<<<<< HEAD
+=======
+#[derive(Serialize)]
+pub struct TransactionData {
+    pub block_number: u64,
+    pub transaction_hash: String,
+    pub from: String,
+    pub to: Option<String>,
+    pub value: String,
+    pub gas: u128,
+    pub gas_price: String,
+    pub input: String,
+    pub nonce: u64,
+    pub transaction_index: u64,
+    pub max_fee_per_gas: Option<String>,
+    pub max_priority_fee_per_gas: Option<String>,
+    pub chain_id: Option<String>,
+}
+
+>>>>>>> dev
 pub struct SupabaseClient {
     client: Client,
     url: String,
@@ -41,9 +61,15 @@ impl SupabaseClient {
     }
 
     pub async fn store_block_data(&self, block_data: BlockData) -> Result<()> {
+<<<<<<< HEAD
         let url = format!("{}/rest/v1/blocks", self.url);
         let response = self.client
             .post(&url)
+=======
+        let block_url = format!("{}/rest/v1/blocks", self.url);
+        let bl_response = self.client
+            .post(&block_url)
+>>>>>>> dev
             .header("apikey", &self.api_key)
             .header("Authorization", format!("Bearer {}", &self.api_key))
             .header("Content-Type", "application/json")
@@ -51,10 +77,37 @@ impl SupabaseClient {
             .send()
             .await?;
 
+<<<<<<< HEAD
         if response.status().is_success() {
             println!("Block data stored successfully.");
         } else {
             println!("Failed to store block data: {:?}", response.text().await?);
+=======
+        if bl_response.status().is_success() {
+            println!("Block data stored successfully");
+        } else {
+            println!("Failed to store block data: {:?}", bl_response.text().await?);
+        }
+
+        Ok(())
+    }
+
+    pub async fn store_transaction_data(&self, transaction_data: TransactionData) -> Result<()> {
+        let transaction_url = format!("{}/rest/v1/transactions", self.url);
+        let tx_response = self.client
+            .post(&transaction_url)
+            .header("apikey", &self.api_key)
+            .header("Authorization", format!("Bearer {}", &self.api_key))
+            .header("Content-Type", "application/json")
+            .json(&transaction_data)
+            .send()
+            .await?;
+
+        if tx_response.status().is_success() {
+            println!("Transaction data stored successfully");
+        } else {
+            println!("Failed to store transaction data: {}", tx_response.text().await?);
+>>>>>>> dev
         }
 
         Ok(())
